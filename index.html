@@ -1,0 +1,101 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SDGs怒りダッシュボード</title><style>
+body{margin:0;font-family:"Hiragino Sans","Noto Sans JP",sans-serif;background:#111;color:#eee}
+header{padding:16px 24px;background:#1c1c1c;border-bottom:3px solid #e5243b}
+h1{margin:0;font-size:26px}.news{margin-top:6px;font-size:18px}.news a{color:#ffd54f}
+.badge-sample{display:inline-block;background:#ff9800;color:#000;font-weight:bold;padding:2px 8px;border-radius:4px;margin-left:8px;font-size:13px}
+.badge-sample[hidden]{display:none}
+main{display:flex;gap:20px;padding:20px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(6,minmax(0,130px));flex:2;min-width:280px;gap:22px 14px}
+.tile{position:relative;width:130px;height:130px;color:#fff;padding:8px;box-sizing:border-box;cursor:pointer;user-select:none}
+.tile .num{font-size:44px;font-weight:900;line-height:1}.tile .name{font-size:13px;font-weight:bold;margin-top:4px;line-height:1.25}
+.tile.calm{opacity:.45}.tile.sel{outline:4px solid #fff}
+.tile.angry{animation:shake var(--d) infinite}
+@keyframes shake{0%{transform:translate(0,0) rotate(0)}20%{transform:translate(calc(var(--a)*-1),var(--a)) rotate(calc(var(--r)*-1))}40%{transform:translate(var(--a),calc(var(--a)*-1)) rotate(var(--r))}60%{transform:translate(calc(var(--a)*-1),0) rotate(0)}80%{transform:translate(var(--a),var(--a)) rotate(calc(var(--r)*-1))}100%{transform:translate(0,0)}}
+.notif{position:absolute;top:-10px;right:-10px;background:#ff1744;color:#fff;border:2px solid #fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:bold;box-shadow:0 0 10px #ff1744}
+.crown{position:absolute;bottom:-12px;left:4px;right:4px;background:#ffd600;color:#000;font-size:11px;font-weight:bold;text-align:center;border-radius:4px}
+.tile.top{box-shadow:0 0 25px 6px #ff1744}
+aside{flex:1;min-width:260px;background:#1c1c1c;border-radius:8px;padding:16px}
+#archive{padding:10px 24px;background:#181818;border-bottom:1px solid #333}#archive h2{font-size:15px;margin:0 0 6px}
+#archive ol{list-style:none;padding:0 0 4px;margin:0;display:flex;gap:8px;overflow-x:auto}
+#archive li{flex:0 0 260px;max-width:80vw;background:#1c1c1c;border-left:4px solid #e5243b;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:13px}
+#archive li:hover{background:#262626}#archive li.cur{outline:2px solid #ffd54f}#archive .dt{color:#aaa;font-size:12px}
+.tag-new{display:inline-block;background:#e5243b;color:#fff;font-weight:bold;font-size:11px;padding:1px 6px;border-radius:4px;margin-right:6px;vertical-align:middle}
+#viewbar{margin-top:6px;font-size:14px}#viewbar .past{display:inline-block;background:#3a2f00;color:#ffd54f;border:1px solid #ffd54f;border-radius:6px;padding:4px 10px}
+#viewbar button{margin-left:10px;background:#ffd54f;color:#000;border:0;border-radius:4px;padding:3px 10px;font-weight:bold;cursor:pointer}
+.speak{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
+#speakBtn{background:#e5243b;color:#fff;border:0;border-radius:20px;padding:8px 18px;font-size:16px;font-weight:bold;cursor:pointer;box-shadow:0 0 10px rgba(229,36,59,.5)}
+#speakBtn:hover{background:#ff3a50}#speakBtn:focus-visible{outline:3px solid #ffd54f;outline-offset:2px}#speakBtn.on{background:#555;box-shadow:none}
+.tag-audio{display:inline-block;background:#26BDE2;color:#000;font-weight:bold;font-size:11px;padding:1px 6px;border-radius:4px;margin-left:6px;vertical-align:middle}
+#archive li:focus-visible{outline:2px solid #ffd54f}
+.muted{color:#888;font-size:13px;margin:8px 0}
+aside h2{margin-top:0;font-size:18px}.tip{font-size:22px;font-weight:bold;margin:8px 0}
+@media(max-width:820px){.grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}}
+</style></head><body>
+<header><h1>🔥 SDGs怒りダッシュボード<span id="sample" class="badge-sample" hidden>サンプルデータ</span></h1><div class="news">ニュース：<a id="news" target="_blank"></a></div><div class="speak"><button id="speakBtn" type="button" aria-label="このニュースを読み上げる">▶ 読み上げ</button><span id="speakMode" class="muted" style="margin:0"></span></div><div id="viewbar"></div><audio id="player" preload="none"></audio></header>
+<section id="archive" hidden><h2 id="archh">アーカイブ</h2><ol id="hist"></ol></section>
+<main><div class="grid" id="grid"></div><aside><h2 id="rep">今日の怒り代表</h2><div id="detail"></div></aside></main>
+<script id="default-data" type="application/json">{
+  "sample": true,
+  "news": {"title": "【サンプルデータ】大手企業、途上国の工場で長時間労働と河川汚染が発覚", "url": "https://example.com/news/123"},
+  "goals": [
+    {"goal": 1, "anger": 6, "comment": "低賃金で貧困を固定化するな！", "targets": ["1.2"]},
+    {"goal": 3, "anger": 7, "comment": "汚染で住民の健康が脅かされている！", "targets": ["3.9"]},
+    {"goal": 5, "anger": 4, "comment": "女性労働者への負担が大きすぎる。", "targets": ["5.1"]},
+    {"goal": 6, "anger": 9, "comment": "川に有害物質を流すなんて許せない！", "targets": ["6.3"]},
+    {"goal": 8, "anger": 10, "comment": "長時間労働は働きがいの真逆だ！！", "targets": ["8.7", "8.8"]},
+    {"goal": 12, "anger": 8, "comment": "サプライチェーンの責任を果たせ！", "targets": ["12.4", "12.6"]},
+    {"goal": 14, "anger": 5, "comment": "その汚染はいずれ海に届く。", "targets": ["14.1"]},
+    {"goal": 16, "anger": 3, "comment": "隠蔽していたなら説明責任がある。", "targets": ["16.6"]}
+  ]
+}
+</script>
+<script>
+const G=[[1,"#E5243B","貧困をなくそう"],[2,"#DDA63A","飢餓をゼロに"],[3,"#4C9F38","すべての人に健康と福祉を"],[4,"#C5192D","質の高い教育をみんなに"],[5,"#FF3A21","ジェンダー平等を実現しよう"],[6,"#26BDE2","安全な水とトイレを世界中に"],[7,"#FCC30B","エネルギーをみんなに そしてクリーンに"],[8,"#A21942","働きがいも経済成長も"],[9,"#FD6925","産業と技術革新の基盤をつくろう"],[10,"#DD1367","人や国の不平等をなくそう"],[11,"#FD9D24","住み続けられるまちづくりを"],[12,"#BF8B2E","つくる責任 つかう責任"],[13,"#3F7E44","気候変動に具体的な対策を"],[14,"#0A97D9","海の豊かさを守ろう"],[15,"#56C02B","陸の豊かさも守ろう"],[16,"#00689D","平和と公正をすべての人に"],[17,"#19486A","パートナーシップで目標を達成しよう"]];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let CUR=null;
+function render(data){
+  stopSpeak();CUR=data;setMode();
+  document.getElementById("sample").hidden=!data.sample;
+  const n=document.getElementById("news");n.textContent=data.news?.title||"(ニュース未設定)";n.href=data.news?.url||"#";
+  const m={};(data.goals||[]).forEach(g=>m[g.goal]=g);
+  let top=null;Object.values(m).forEach(g=>{if(g.anger>0&&(!top||g.anger>top.anger))top=g});
+  const grid=document.getElementById("grid");grid.innerHTML="";
+  G.forEach(([no,col,name])=>{
+    const g=m[no]||{goal:no,anger:0},a=Math.max(0,Math.min(10,+g.anger||0));
+    const t=document.createElement("div");t.className="tile "+(a>0?"angry":"calm")+(top&&top.goal===no?" top":"");t.style.background=col;
+    if(a>0){const k=a/10;t.style.setProperty("--a",(0.3+4.7*k*k).toFixed(2)+"px");t.style.setProperty("--r",(0.2+2.8*k*k).toFixed(2)+"deg");t.style.setProperty("--d",(2.2-1.95*k).toFixed(2)+"s")}
+    t.innerHTML=`<div class="num">${no}</div><div class="name">${esc(name)}</div>`+(a>0?`<div class="notif">${a}</div>`:"")+(top&&top.goal===no?`<div class="crown">👑 今日の怒り代表</div>`:"");
+    const show=()=>{document.querySelectorAll(".tile.sel").forEach(e=>e.classList.remove("sel"));t.classList.add("sel");detail(no,name,g,top)};
+    t.onmouseenter=show;t.onclick=show;grid.appendChild(t);
+  });
+  if(top)detail(top.goal,G[top.goal-1][2],top,top);else document.getElementById("detail").textContent="今日はどの目標も怒っていません。";
+}
+function detail(no,name,g,top){
+  document.getElementById("rep").textContent=top&&top.goal===no?"👑 今日の怒り代表":"目標の声";
+  document.getElementById("detail").innerHTML=`<div style="color:${G[no-1][1]};font-weight:bold">目標${no}：${esc(name)}</div><div>怒り度：${"🔥".repeat(g.anger||0)||"😌"} (${g.anger||0}/10)</div>${g.comment?`<div class="tip">「${esc(g.comment)}」</div>`:`<div class="muted">コメントなし</div>`}<div>関連ターゲット：${(g.targets||[]).length?esc(g.targets.join(", ")):`<span class="muted">―</span>`}</div>`;
+}
+const player=document.getElementById("player"),btn=document.getElementById("speakBtn"),modeEl=document.getElementById("speakMode");
+let speaking=false;
+function setBtn(on){speaking=on;btn.classList.toggle("on",on);btn.textContent=on?"⏸ 停止":"▶ 読み上げ";btn.setAttribute("aria-label",on?"読み上げを停止":"このニュースを読み上げる");btn.setAttribute("aria-pressed",on)}
+function setMode(){const tts="speechSynthesis" in window;modeEl.textContent=CUR&&CUR.audio?"読み上げ係の音声":tts?"ブラウザの音声":"読み上げ非対応のブラウザです";btn.disabled=!(CUR&&CUR.audio)&&!tts}
+function stopSpeak(){player.pause();player.removeAttribute("src");if("speechSynthesis" in window)speechSynthesis.cancel();setBtn(false)}
+function speakText(){const d=CUR,m={};(d.goals||[]).forEach(g=>m[g.goal]=g);let top=null;Object.values(m).forEach(g=>{if(g.anger>0&&(!top||g.anger>top.anger))top=g});
+  let t=(d.news?.title||"")+"。";if(top){t+=`怒り代表、目標${top.goal} ${G[top.goal-1][2]}、怒り度${top.anger}。`;if(top.comment)t+=top.comment}
+  const u=new SpeechSynthesisUtterance(t);u.lang="ja-JP";u.onend=u.onerror=()=>setBtn(false);speechSynthesis.cancel();speechSynthesis.speak(u);setBtn(true)}
+btn.onclick=()=>{if(!CUR)return;if(speaking){stopSpeak();return}
+  if(CUR.audio){player.src=CUR.audio;player.play().then(()=>setBtn(true)).catch(()=>{if("speechSynthesis" in window){modeEl.textContent="ブラウザの音声（音声ファイルを再生できませんでした）";speakText()}})}else speakText()};
+player.onended=()=>setBtn(false);
+const getj=u=>fetch(u,{cache:"no-store"}).then(r=>r.ok?r.json():null).catch(()=>null);
+function archive(list,cur){const ol=document.getElementById("hist");ol.innerHTML="";document.getElementById("archive").hidden=!list.length;document.getElementById("archh").textContent=`📚 アーカイブ（${list.length}件）`;const vb=document.getElementById("viewbar");const fmt=t=>t?new Date(t).toLocaleString("ja-JP",{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"}):"";
+  if(cur===0)vb.innerHTML=`<span class="tag-new">最新</span>`;else{vb.innerHTML=`<span class="past">🕙 過去のニュース（${esc(fmt(list[cur].addedAt))}）を表示中</span><button>最新に戻る</button>`;vb.querySelector("button").onclick=()=>{render(list[0]);archive(list,0)}}
+  list.forEach((h,i)=>{const li=document.createElement("li");li.className=i===cur?"cur":"";const top=(h.goals||[]).reduce((b,g)=>g.anger>0&&(!b||g.anger>b.anger||(g.anger===b.anger&&g.goal<b.goal))?g:b,null);
+    li.innerHTML=`<div>${i===0?`<span class="tag-new">最新</span>`:""}${esc(h.news?.title||"(無題)")}${h.audio?`<span class="tag-audio">音声</span>`:""}</div><div class="dt">${esc(h.addedAt?new Date(h.addedAt).toLocaleString("ja-JP"):"")}${top?` ｜ 怒り代表：目標${top.goal}（${top.anger}）`:""}</div>`;
+    li.tabIndex=0;li.setAttribute("role","button");li.setAttribute("aria-label",`${h.news?.title||""} を表示`);li.onclick=()=>{render(h);archive(list,i);};li.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();li.onclick()}};ol.appendChild(li)})}
+render(JSON.parse(document.getElementById("default-data").textContent));
+Promise.all([getj("./anger.json"),getj("./history.json")]).then(([a,h])=>{
+  let list=Array.isArray(h)?h.slice():[];
+  if(a&&!list.some(x=>x.news?.title===a.news?.title))list.unshift(a);
+  const latest=a?Object.assign({},list.find(x=>x.news?.title===a.news?.title)||{},a,{audio:a.audio||list.find(x=>x.news?.title===a.news?.title)?.audio}):list[0];if(latest)render(latest);
+  if(Array.isArray(h))archive(list,0);});
+</script></body></html>

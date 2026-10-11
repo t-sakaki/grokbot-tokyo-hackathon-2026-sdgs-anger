@@ -1,0 +1,14 @@
+{
+  "sample": true,
+  "news": {"title": "【サンプルデータ】大手企業、途上国の工場で長時間労働と河川汚染が発覚", "url": "https://example.com/news/123"},
+  "goals": [
+    {"goal": 1, "anger": 6, "comment": "低賃金で貧困を固定化するな！", "targets": ["1.2"]},
+    {"goal": 3, "anger": 7, "comment": "汚染で住民の健康が脅かされている！", "targets": ["3.9"]},
+    {"goal": 5, "anger": 4, "comment": "女性労働者への負担が大きすぎる。", "targets": ["5.1"]},
+    {"goal": 6, "anger": 9, "comment": "川に有害物質を流すなんて許せない！", "targets": ["6.3"]},
+    {"goal": 8, "anger": 10, "comment": "長時間労働は働きがいの真逆だ！！", "targets": ["8.7", "8.8"]},
+    {"goal": 12, "anger": 8, "comment": "サプライチェーンの責任を果たせ！", "targets": ["12.4", "12.6"]},
+    {"goal": 14, "anger": 5, "comment": "その汚染はいずれ海に届く。", "targets": ["14.1"]},
+    {"goal": 16, "anger": 3, "comment": "隠蔽していたなら説明責任がある。", "targets": ["16.6"]}
+  ]
+}

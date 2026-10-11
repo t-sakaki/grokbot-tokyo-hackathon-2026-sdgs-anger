@@ -1,0 +1,121 @@
+{
+  "sample": false,
+  "news": {
+    "title": "ケニア・ナイロビのスラムで住民がフェミサイド対策を議論｜2025年に少なくとも220件",
+    "url": "https://x.com/i/trending/2108188562235523563"
+  },
+  "goals": [
+    {
+      "goal": 5,
+      "anger": 10,
+      "comment": "一番安全なはずの家で、顔見知りに殺される。女性の命を奪う暴力を一日も放置するな！",
+      "targets": [
+        "5.2",
+        "5.3",
+        "5.c"
+      ],
+      "source": "bot"
+    },
+    {
+      "goal": 16,
+      "anger": 9,
+      "comment": "年220件以上、女性が家の中で顔見知りに殺される。少女のうちに守れない社会を放置するな！",
+      "targets": [
+        "16.1",
+        "16.2",
+        "16.3"
+      ],
+      "source": "bot"
+    },
+    {
+      "goal": 1,
+      "anger": 0,
+      "comment": "",
+      "targets": []
+    },
+    {
+      "goal": 2,
+      "anger": 0,
+      "comment": "",
+      "targets": []
+    },
+    {
+      "goal": 3,
+      "anger": 0,
+      "comment": "",
+      "targets": []
+    },
+    {
+      "goal": 4,
+      "anger": 0,
+      "comment": "",
+      "targets": []
+    },
+    {
+      "goal": 6,
+      "anger": 0,
+      "comment": "",
+      "targets": []
+    },
+    {
+      "goal": 7,
+      "anger": 0,
+      "comment": "",
+      "targets": []
+    },
+    {
+      "goal": 8,
+      "anger": 0,
+      "comment": "",
+      "targets": []
+    },
+    {
+      "goal": 9,
+      "anger": 0,
+      "comment": "",
+      "targets": []
+    },
+    {
+      "goal": 10,
+      "anger": 0,
+      "comment": "",
+      "targets": []
+    },
+    {
+      "goal": 11,
+      "anger": 0,
+      "comment": "",
+      "targets": []
+    },
+    {
+      "goal": 12,
+      "anger": 0,
+      "comment": "",
+      "targets": []
+    },
+    {
+      "goal": 13,
+      "anger": 0,
+      "comment": "",
+      "targets": []
+    },
+    {
+      "goal": 14,
+      "anger": 0,
+      "comment": "",
+      "targets": []
+    },
+    {
+      "goal": 15,
+      "anger": 0,
+      "comment": "",
+      "targets": []
+    },
+    {
+      "goal": 17,
+      "anger": 0,
+      "comment": "",
+      "targets": []
+    }
+  ]
+}
